@@ -93,6 +93,16 @@ def root():
         ]
     }
 
+@app.get("/health")
+def health_check():
+    """Health check endpoint for monitoring"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "service": "aqlify-backend",
+        "version": "3.0.0-cloud"
+    }
+
 @app.post("/auth/register")
 def register_business(user: UserRegister):
     user_id = str(uuid.uuid4())
@@ -363,9 +373,3 @@ def health_check():
             "alert_system": "✅ Monitoring"
         }
     }
-
-# For cloud deployment
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
