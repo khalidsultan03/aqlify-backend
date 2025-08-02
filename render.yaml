@@ -2,6 +2,6 @@ services:
   - type: web
     name: aqlify-backend
     env: python
-    buildCommand: "pip install --upgrade pip && pip install -r requirements_deploy.txt"
-    startCommand: "uvicorn main_fixed:app --host 0.0.0.0 --port $PORT"
+    buildCommand: "pip install fastapi uvicorn"
+    startCommand: "uvicorn simple:app --host 0.0.0.0 --port $PORT --reload"
     plan: free
