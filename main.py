@@ -1,53 +1,20 @@
+from fastapi import FastAPI
 import os
-import json
-import time
-from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, EmailStr
-import secrets
-from openai import OpenAI
-import dotenv
 
-dotenv.load_dotenv()
+app = FastAPI()
 
-app = FastAPI(
-    title="Aqlify Demand Forecasting API",
-    description="An expert AI assistant for supply chain managers in Oman.",
-    version="2.0.0"
-)
+@app.get("/")
+def root():
+    return {"message": "✅ AQLIFY BACKEND WORKING!", "status": "success", "working": True}
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"], 
-)
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
 
-class SalesDataEntry(BaseModel):
-    date: str
-    quantity: int
-
-class ForecastRequest(BaseModel):
-    product_type: str
-    region: str
-    selling_point: str
-    sales_data: List[SalesDataEntry] = Field(..., min_length=14)
-    user_notes: Optional[str] = None
-
-class ForecastItem(BaseModel):
-    forecast_date: str
-    forecast_qty: int
-
-class ForecastResponse(BaseModel):
-    forecasts: List[ForecastItem]
-    reorder_qty: str
-    confidence: str
-    english_summary: str
-    arabic_summary: str
-
-def format_sales_history(history: List[dict]) -> str:
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
     return "\n".join([f"- {item['date']}: {item['quantity']} units" for item in history])
 
 # --- Login --- 
